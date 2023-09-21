@@ -1,74 +1,72 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class InitGame {
-
-    Game game;
-    private final Startup[] startup;
-    int MAXTREFFER=9;
-
-    public InitGame(int nrStartupsToSink){
-        game=new Game(nrStartupsToSink);
+    private GameBoard game;
+    private int trefferCounter = 0;
+    private  int MAXTREFFER = 9;
+    private int LIFE=9;
+    public InitGame(int nrOfStartups){
+        game=new GameBoard(nrOfStartups);
         System.out.println("Versuche die X,Y-Koordinaten der Startups zu erraten... ");
         System.out.println();
-        startup=game.getStartups();
         game.getSchiff();
-        getCheatSheat();
         init();
     }
 
     public void init() {
-
-        int trefferCounter = 0;
         Scanner scan = new Scanner(System.in);
         System.out.print("Eingabe starten: ");
 
-        while (scan.hasNext()) {
+        while (trefferCounter <= MAXTREFFER && !this.isAllShiffKilled() || LIFE>0) {
             String input = scan.next();
-            if (trefferCounter == MAXTREFFER || this.isAllShiffKilled()) {
-                String string = trefferCounter < 10 ? "Du hast gewonnen" : "Du hast zu viele Treffer, hast verloren";
-                System.out.println("Du hast " + trefferCounter + " treffer gehabt. " + string);
-                break;
-            }
 
             if (input.equals("0")) {
                 break;
             }
 
             if(input.equals("9")){
-            getCheatSheat();
+            game.getCheatSheat();
             }
 
-            while (trefferCounter <= MAXTREFFER || !this.isAllShiffKilled()) {
-                if (startup[0].isEqualToLabel(input) && !startup[0].isKilled()) {
-                    startup[0].increaseTrefferCounter();
-                    trefferCounter++;
-                    break;
-                } else if (startup[1].isEqualToLabel(input) && !startup[1].isKilled()) {
-                    startup[1].increaseTrefferCounter();
-                    trefferCounter++;
-                    break;
-                } else if (startup[2].isEqualToLabel(input) && !startup[2].isKilled()) {
-                    startup[2].increaseTrefferCounter();
-                    trefferCounter++;
-                    break;
-                } else {
+            if(LIFE==0){
+                break;
+            }
+
+            if(isAllShiffKilled()){
+                break;
+            }
+
+            else {
+                boolean hit=false;
+                for(Startup startup:game.getStartups()) {
+                    if (startup.isEqualToLabel(input)) {
+                        trefferCounter++;
+                        hit = true;
+                        break;
+                    }
+                }
+                if(!hit) {
                     System.out.println("probiere nochmal");
-                    System.out.print("Eingabe: ");
-                    break;
+                    LIFE--;
                 }
 
             }
         }
+
     }
     private boolean isAllShiffKilled(){
-         return startup[0].isKilled() && startup[1].isKilled() && startup[2].isKilled();
+        boolean isKilled=false;
+        if(game.getStartups().get(0).isKilled() && game.getStartups().get(1).isKilled() && game.getStartups().get(2).isKilled()){
+            String string = LIFE != 0 ? "Du hast gewonnen. Deine Leben: " +LIFE : "Du hast verloren. Deine Leben: " +LIFE;
+            System.out.println("Du hast " + trefferCounter + " treffer gehabt. " + string);
+            isKilled=true;
+        } else {
+            System.out.println("Du hast noch "+LIFE+" Leben, und insgesamt "+trefferCounter+ " treffer");
+            System.out.println();
+        }
+        return isKilled;
         }
 
-        private void getCheatSheat(){
-            System.out.println("Here the CheatSheat");
-            for(Startup star:startup){
-                star.getCheatSheat();
-            }
-        }
 }

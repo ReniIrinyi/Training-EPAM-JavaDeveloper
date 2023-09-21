@@ -9,9 +9,19 @@ public class Startup {
     private int trefferCounter;
     private boolean killed=false;
 
-    public Startup(String name) {
+    public Startup(String name, GameBoard gameBoard) {
         this.trefferCounter=1;
         this.name = name;
+        int random=(int) (Math.random()* 5);
+        this.generateRandomFields(gameBoard, random);
+    }
+    public void generateRandomFields( GameBoard gameBoard, int random){
+            int randomNr=(int) (Math.random()*2);
+            if(randomNr==1){
+                this.generateRandomFieldsHorizontal(gameBoard, random);
+            } else {
+                this.generateRandomFieldsVertical(gameBoard, random);
+            }
 
     }
 
@@ -81,16 +91,12 @@ public class Startup {
         System.out.println(Arrays.toString(y.toArray()));
         System.out.println("__________________");
     }
-    public void generateRandomFieldsVertical(GameBoard gameBoard){
-        int randomIndex=(int) (( Math.random()* 2));
-        int randomNr=(int) (Math.random()* 4);
+    public void generateRandomFieldsVertical(GameBoard gameBoard, int randomNr){
         this.setX(gameBoard.getX(randomNr), gameBoard.getX(randomNr+1),gameBoard.getX(randomNr+2));
         this.setY(gameBoard.getY(randomNr), gameBoard.getY(randomNr),gameBoard.getY(randomNr));
         this.getLabelsStrings();
     }
-    public void generateRandomFieldsHorizontal(GameBoard gameBoard ){
-        int randomIndex=(int) ( Math.random()* 2);
-        int randomNr=(int) (Math.random()* 5);
+    public void generateRandomFieldsHorizontal(GameBoard gameBoard,int randomNr){
         this.setX(gameBoard.getX(randomNr), gameBoard.getX(randomNr),gameBoard.getX(randomNr));
         this.setY(gameBoard.getY(randomNr), gameBoard.getY(randomNr+1),gameBoard.getY(randomNr+2));
         this.getLabelsStrings();
